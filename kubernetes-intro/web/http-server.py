@@ -2,10 +2,22 @@
 import http.server
 import socketserver
 import os
+import sys
+import logging
 
 PORT = 8000
 DIRECTORY = os.environ['SERVER_FOLDER']
-print(DIRECTORY)
+
+
+def setupLogging(loglevel=logging.DEBUG):
+    logger = logging.getLogger()
+    logger.setLevel(loglevel)
+    ch = logging.StreamHandler(sys.stdout)
+    ch.setLevel(loglevel)
+    formatter = logging.Formatter("%(message)s")
+    ch.setFormatter(formatter)
+    logger.addHandler(ch)
+    return logger
 
 
 class Handler(http.server.SimpleHTTPRequestHandler):
@@ -13,6 +25,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         super().__init__(*args, directory=DIRECTORY, **kwargs)
 
 
+logger = setupLogging("DEBUG")
 with socketserver.TCPServer(("", PORT), Handler) as httpd:
-    print("serving at port", PORT)
+    logger.debug("serving at port " + str(PORT))
     httpd.serve_forever()
