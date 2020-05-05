@@ -1,0 +1,21 @@
+# OS generated files #
+######################
+*.swp
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+# Logs #
+######################
+*.log
+# Artifacts #
+.terraform
+
+# Working files #
+notes
+kubernetes-intro/web/app
+kubernetes-intro/microservices-demo
+kubernetes-intro/PR.md
