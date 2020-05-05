@@ -11,6 +11,9 @@ spec:
       volumeMounts:
         - name: app
           mountPath: /app
+      env:
+        - name: SERVER_FOLDER
+          value: "/app"
   initContainers:
     - name: init-index-page
       image: busybox:1.31.0
