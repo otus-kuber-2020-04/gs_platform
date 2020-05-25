@@ -19,3 +19,4 @@ notes
 kubernetes-intro/web/app
 kubernetes-intro/microservices-demo
 kubernetes-intro/PR.md
+*.pdf
