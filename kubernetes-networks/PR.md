@@ -1,0 +1,97 @@
+# Выполнено ДЗ №5
+
+ - [x] Основное ДЗ
+ - [x] Задание со * DNS через MetalLB
+ - [ ] Задание со * Ingress для Dashboard
+ - [ ] Задание со * Canary для Ingress
+
+## В процессе сделано:
+ - 5.1 Описал Deployment
+ - 5.2 Описал Service
+ - 5.3 Переключил k8s в ipvs режим
+ - 5.4 Установил MetalLB 
+ - Сделал CoreDNS доступным вне minikube по tcp & udp
+ - Изучил Ingress & Headless services 
+
+## Как запустить проект:
+- Добавление маршрута на миникуб
+```
+sudo route -n add 172.17.0.0/16 $(minikube ip)
+```
+
+
+## Как проверить работоспособность:
+- Запустить minikube c hyperkit
+```
+minikube start --driver=hyperkit
+```
+- 5.2 Создание Deployment
+```
+kubectl apply -f web-deploy.yaml
+kubectl describe deployment web
+```
+За выкаткой можно наблюдать через 'kubespy trace deploy' OR 'kubectl get events --watch'
+
+- 5.2 Создание Service
+```
+kubectl apply -f web-svc-cip.yaml
+kubectl get services
+```
+
+- 5.3 Переключил K8s в IPVS режим
+
+```
+minikube ssh
+sudo su
+# no iptables rules
+iptables --list -nv -t nat
+#Check if mode:"ipvs" and strictARP: true
+kubectl --namespace kube-system edit configmap/kube-prox
+#Install and check ipvsadm
+toolbox
+dnf install -y ipvsadm && dnf clean all
+ipvsadm --list -n
+```
+- 5.4 Установил MetalLB
+```
+#Install MetalLB
+kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.3/manifests/namespace.yaml
+kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.3/manifests/metallb.yaml
+kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)"
+#Verify
+kubectl --namespace metallb-system get all
+#Configure announces and create addr pool
+kubectl apply -f metallb-config.yaml
+#Create & verify svc with type: LoadBalancer
+kubectl apply -f web-svc-lb.yaml
+kubectl -n metallb-system logs pod/controller-$$$ | grep ipAllocated
+kubectl describe svc web-svc-lb
+#Final verification
+sudo route -n add 172.17.0.0/16 $(minikube ip)
+#Open
+http://$(LB Ingress for web-svc-lb)/index.html
+```	
+
+ - http://$(minikube ip/web/index.html
+
+## PR checklist:
+ - [ ] Выставлен label с номером домашнего задания
+
+## Вопросы
+
+- Почему следующая конфигурация валидна, но не имеет смысла?
+
+```
+livenessProbe:
+  exec:
+command:
+- 'sh'
+- '-c'
+- 'ps aux | grep my_web_server_process'
+```
+
+Если это проверка для главного процесса с PID 1, то проверка не имеет смысла. Потому что в случае его падения весь контейнер будет польность перезапущен.
+
+- Бывают ли ситуации, когда она все-таки имеет смысл?
+
+Возможо использование подобной проверки, если речь о дочернем процессе внутри контейнера
