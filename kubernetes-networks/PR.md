@@ -10,7 +10,7 @@
  - 5.2 Описал Service
  - 5.3 Переключил k8s в ipvs режим
  - 5.4 Установил MetalLB 
- - Сделал CoreDNS доступным вне minikube по tcp & udp
+ - 5.5 Сделал CoreDNS доступным вне minikube по tcp & udp
  - Изучил Ingress & Headless services 
 
 ## Как запустить проект:
@@ -71,8 +71,13 @@ sudo route -n add 172.17.0.0/16 $(minikube ip)
 #Open
 http://$(LB Ingress for web-svc-lb)/index.html
 ```	
+- 5.5 Сделал CoreDNS доступным вне minikube по tcp & udp
+```
+kubectl apply -f coredns/coredns-svc-lb.yaml
+kubectl get services -A
+dig web-svc-cip.default.svc.cluster.local @172.17.255.2 +short
+``` 
 
- - http://$(minikube ip/web/index.html
 
 ## PR checklist:
  - [ ] Выставлен label с номером домашнего задания
