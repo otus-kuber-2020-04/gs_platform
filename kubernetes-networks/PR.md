@@ -3,7 +3,7 @@
  - [x] Основное ДЗ
  - [x] Задание со * DNS через MetalLB
  - [x] Задание со * Ingress для Dashboard
- - [ ] Задание со * Canary для Ingress
+ - [x] Задание со * Canary для Ingress
 
 ## В процессе сделано:
  - 5.1 Описал Deployment
