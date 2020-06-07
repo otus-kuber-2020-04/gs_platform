@@ -11,7 +11,8 @@
  - 5.3 Переключил k8s в ipvs режим
  - 5.4 Установил MetalLB 
  - 5.5 Сделал CoreDNS доступным вне minikube по tcp & udp
- - Изучил Ingress & Headless services 
+ - 5.6 Изучил Ingress & Headless services 
+ - 5.7 Ingress для Dashboard
 
 ## Как запустить проект:
 - Добавление маршрута на миникуб
@@ -78,6 +79,29 @@ kubectl get services -A
 dig web-svc-cip.default.svc.cluster.local @172.17.255.2 +short
 ``` 
 
+- 5.6 Изучил Ingress & Headless services 
+```
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/baremetal/deploy.yaml
+curl $(kubectl get services -A | egrep "ingress-nginx.*LoadBalancer" | awk '{ print $5 }')
+#Headless service
+kubectl apply -f web-svc-headless.yaml
+kubectl apply -f web-ingress.yaml
+kubectl describe ingress/web
+# Default backend shows: default-http-backend:80 (<error: endpoints "default-http-backend" not found>)
+# Which is Ok, see https://kubernetes.github.io/ingress-nginx/user-guide/default-backend/
+curl http://$(kubectl get services -A | egrep "ingress-nginx.*LoadBalancer" | awk '{ print $5 }')/web/index.html
+```
+-  5.7 Ingress для Dashboard
+```
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.1/aio/deploy/recommended.yaml
+# Get secret for test login 
+kubectl -n kube-system get secret | grep "deployment-controller-token"
+kubectl -n kube-system describe secret deployment-controller-token-$$$
+# Use this secret to login over 'kubectl proxy' and 
+# http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
+
+
+```
 
 ## PR checklist:
  - [ ] Выставлен label с номером домашнего задания
