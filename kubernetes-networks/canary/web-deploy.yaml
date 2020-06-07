@@ -1,0 +1,96 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-prod
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: web-prod
+  template:
+    metadata:
+      name: web-prod
+      labels:
+        app: web-prod
+    spec:
+      containers:
+        - name: web-prod
+          image: negleb/otus-k8s-hw-2_web-app:1.0.0
+          readinessProbe:
+            httpGet:
+              path: /index.html
+              port: 8000
+          livenessProbe:
+            tcpSocket: { port: 8000 }
+          volumeMounts:
+            - name: app
+              mountPath: /app
+      initContainers:
+        - name: init-index-page
+          image: busybox:1.31.0
+          command:
+            [
+              "sh",
+              "-c",
+              "wget -O- https://raw.githubusercontent.com/express42/otus-platform-snippets/master/Module-02/Introduction-to-Kubernetes/wget.sh | sh",
+            ]
+          volumeMounts:
+            - name: app
+              mountPath: /app
+      volumes:
+        - name: app
+          emptyDir: {}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 100%
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-canary
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: web-canary
+  template:
+    metadata:
+      name: web-canary
+      labels:
+        app: web-canary
+    spec:
+      containers:
+        - name: web-canary
+          image: negleb/otus-k8s-hw-2_web-app:1.0.0
+          readinessProbe:
+            httpGet:
+              path: /index.html
+              port: 8000
+          livenessProbe:
+            tcpSocket: { port: 8000 }
+          volumeMounts:
+            - name: app
+              mountPath: /app
+      initContainers:
+        - name: init-index-page
+          image: busybox:1.31.0
+          command:
+            [
+              "sh",
+              "-c",
+              "wget -O- https://raw.githubusercontent.com/express42/otus-platform-snippets/master/Module-02/Introduction-to-Kubernetes/wget.sh | sh",
+            ]
+          volumeMounts:
+            - name: app
+              mountPath: /app
+      volumes:
+        - name: app
+          emptyDir: {}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 100%

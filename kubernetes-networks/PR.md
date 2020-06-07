@@ -2,7 +2,7 @@
 
  - [x] Основное ДЗ
  - [x] Задание со * DNS через MetalLB
- - [ ] Задание со * Ingress для Dashboard
+ - [x] Задание со * Ingress для Dashboard
  - [ ] Задание со * Canary для Ingress
 
 ## В процессе сделано:
@@ -13,6 +13,7 @@
  - 5.5 Сделал CoreDNS доступным вне minikube по tcp & udp
  - 5.6 Изучил Ingress & Headless services 
  - 5.7 Ingress для Dashboard
+ - 5.8 Canary для Ingress
 
 ## Как запустить проект:
 - Добавление маршрута на миникуб
@@ -94,13 +95,20 @@ curl http://$(kubectl get services -A | egrep "ingress-nginx.*LoadBalancer" | aw
 -  5.7 Ingress для Dashboard
 ```
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.1/aio/deploy/recommended.yaml
+kubectl apply -f dashboard/dash-ingress.yaml
 # Get secret for test login 
 kubectl -n kube-system get secret | grep "deployment-controller-token"
 kubectl -n kube-system describe secret deployment-controller-token-$$$
-# Use this secret to login over 'kubectl proxy' and 
-# http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
+# Use this secret to login 
 
-
+```
+- 5.8 Canary для Ingress
+```
+kubectl apply -f canary/web-deploy.yaml
+kubectl apply -f canary/web-svc-headless.yaml
+kubectl apply -f canary/canary-web-ingress.yaml
+# Verification step. Check if it returns something like export HOSTNAME='web-canary-$$$'
+curl -H "Host: canary-sandbox.com" -H "canary: always" http://172.17.255.3/canary-test --silent | grep HOSTNAME
 ```
 
 ## PR checklist:
