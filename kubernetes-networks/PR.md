@@ -107,7 +107,10 @@ kubectl -n kube-system describe secret deployment-controller-token-$$$
 kubectl apply -f canary/web-deploy.yaml
 kubectl apply -f canary/web-svc-headless.yaml
 kubectl apply -f canary/canary-web-ingress.yaml
-# Verification step. Check if it returns something like export HOSTNAME='web-canary-$$$'
+# Verification step. 
+# 1st curl returns HOSTNAME='web-prod-$$$'
+curl -H "Host: canary-sandbox.com" http://172.17.255.3/canary-test --silent | grep HOSTNAME 
+# 2nd curl with additional canary: always header returns HOSTNAME='web-canary-$$$'
 curl -H "Host: canary-sandbox.com" -H "canary: always" http://172.17.255.3/canary-test --silent | grep HOSTNAME
 ```
 
