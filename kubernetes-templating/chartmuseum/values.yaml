@@ -16,7 +16,7 @@ ingress:
     certmanager.k8s.io/cluster-issuer: "letsencrypt-prod"
     certmanager.k8s.io/acme-challenge-type: http01
   hosts:
-    - name: chartmuseum.35.228.239.193.nip.io
+    - name: chartmuseum.35.195.221.210.nip.io
       path: /
       tls: true
       tlsSecret: chartmuseum-tls

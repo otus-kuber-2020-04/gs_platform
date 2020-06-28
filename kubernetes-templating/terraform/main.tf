@@ -1,5 +1,5 @@
 provider "google" {
-  credentials = file("~/.gcp/My_Project-42ebef5ee766.json")
-  project     = "alert-imprint-279710"
+  credentials = file("~/.gcp/bright-link-281011-933bbf38e6bb.json")
+  project     = "bright-link-281011"
   region      = "europe-west1"
 }

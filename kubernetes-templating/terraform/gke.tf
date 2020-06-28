@@ -4,17 +4,17 @@ resource "google_project_service" "kubernetes" {
 
 resource "google_container_cluster" "kubernetes" {
   name               = "otus-k8s-cluster"
-  location           = "europe-north1"
-  min_master_version = "1.15.9-gke.26"
+  location           = "europe-west1"
+  min_master_version = "1.16.9-gke.6"
   monitoring_service = "none"
   logging_service    = "none"
 
   node_locations = [
-    "europe-north1-a",
+    "europe-west1-d",
   ]
 
   remove_default_node_pool = true
-  initial_node_count       = 1
+  initial_node_count       = 2
 
   master_auth {
     username = ""
