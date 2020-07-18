@@ -57,12 +57,15 @@ helm install chartmuseum stable/chartmuseum --wait --namespace=chartmuseum --ver
 - 7.4 Установил Chartmuseum
 
 ```
+helm ls -n chartmuseum
 kubectl get svc nginx-ingress-controller -n nginx-ingress -o=jsonpath='{.status.loadBalancer.ingress[0].ip}'
 #Update chartmuseum/values.yaml
 # - name: chartmuseum.$INGRESS_EIP.nip.io
 export INGRESS_EIP=$(kubectl get svc nginx-ingress-controller -n nginx-ingress -o=jsonpath='{.status.loadBalancer.ingress[0].ip}')
 curl https://chartmuseum.$INGRESS_EIP.nip.io
 ```
+
+![Proof](https://habrastorage.org/webt/zv/z2/hr/zvz2hrxnncsnfnjcwcqddtzcwbm.png)
 
 Должно вернуть Chartmuseum welcome page
 
