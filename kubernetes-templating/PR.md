@@ -25,7 +25,7 @@ helm repo add stable https://kubernetes-charts.storage.googleapis.com
 
 ```
 kubectl create ns nginx-ingress
-helm upgrade --install nginx-ingress stable/nginx-ingress --wait --namespace=nginx-ingress --version=1.11.1
+helm upgrade --install nginx-ingress stable/nginx-ingress --wait --namespace=nginx-ingress --version=1.40.3
 ```
 
 - 7.3 Задиплоил cert-manager + добавил ClusterIssuer
@@ -33,10 +33,15 @@ helm upgrade --install nginx-ingress stable/nginx-ingress --wait --namespace=ngi
 ```
 helm repo add jetstack https://charts.jetstack.io
 kubectl create ns cert-manager
-#kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v0.14.0/cert-manager.yaml
 kubectl apply -f https://raw.githubusercontent.com/jetstack/cert-manager/release-0.9/deploy/manifests/00-crds.yaml
-kubectl label namespace cert-manager certmanager.k8s.io/disable-validation="true"
-helm upgrade --install cert-manager jetstack/cert-manager --wait --namespace=cert-manager --version=0.9.0
+
+kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v0.15.1/cert-manager.crds.yaml
+helm install \
+  cert-manager jetstack/cert-manager \
+  --namespace cert-manager \
+  --version v0.15.1 \
+#  --set installCRDs=true
+# To automatically install and manage the CRDs as part of your Helm release, you must add the --set installCRDs=true flag to your Helm installation command.
 kubectl apply -f cert-manager/cluster-issuer-prod.yaml -n cert-manager
 ```
 
@@ -44,7 +49,7 @@ kubectl apply -f cert-manager/cluster-issuer-prod.yaml -n cert-manager
 
 ```
 kubectl create ns chartmuseum
-helm upgrade --install chartmuseum stable/chartmuseum --wait --namespace=chartmuseum --version=2.3.2 -f chartmuseum/values.yaml
+helm install chartmuseum stable/chartmuseum --wait --namespace=chartmuseum --version=2.13.0 -f chartmuseum/values.yaml
 ```
 
 ## Как проверить работоспособность:
@@ -52,6 +57,9 @@ helm upgrade --install chartmuseum stable/chartmuseum --wait --namespace=chartmu
 - 7.4 Установил Chartmuseum
 
 ```
+kubectl get svc nginx-ingress-controller -n nginx-ingress -o=jsonpath='{.status.loadBalancer.ingress[0].ip}'
+#Update chartmuseum/values.yaml
+# - name: chartmuseum.$INGRESS_EIP.nip.io
 export INGRESS_EIP=$(kubectl get svc nginx-ingress-controller -n nginx-ingress -o=jsonpath='{.status.loadBalancer.ingress[0].ip}')
 curl https://chartmuseum.$INGRESS_EIP.nip.io
 ```
@@ -61,3 +69,11 @@ curl https://chartmuseum.$INGRESS_EIP.nip.io
 ## PR checklist:
 
 - [ ] Выставлен label с темой домашнего задания
+
+Notes
+
+Get the ChartMuseum URL by running:
+
+export POD_NAME=$(kubectl get pods --namespace chartmuseum -l "app=chartmuseum" -l "release=chartmuseum" -o jsonpath="{.items[0].metadata.name}")
+  echo http://127.0.0.1:8080/
+  kubectl port-forward $POD_NAME 8080:8080 --namespace chartmuseum
