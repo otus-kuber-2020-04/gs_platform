@@ -1,18 +1,22 @@
+---
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
-  name: frontend
-  annotations:
-    certmanager.k8s.io/cluster-issuer: "letsencrypt-prod"
+    name: frontend
+    annotations:
+        kubernetes.io/ingress.class: "nginx"
+        kubernetes.io/tls-acme: "true"
+        cert-manager.io/cluster-issuer: "letsencrypt-prod"
 spec:
-  rules:
-  - host: shop.35.228.239.193.nip.io
-    http:
-      paths:
-      - backend:
-          serviceName: frontend
-          servicePort: 80
   tls:
-  - hosts:
-    - shop.35.228.239.193.nip.io
-    secretName: frontend-ingress-cert
+    - hosts:
+        - hipster-shop.35.241.197.0.sslip.io
+      secretName: hipster-shop.35.241.197.0.sslip.io
+    rules:
+    - host: hipster-shop.35.241.197.0.sslip.io
+      http:
+        paths:
+        - path: /
+          backend:
+            serviceName: frontend
+            servicePort: 8000

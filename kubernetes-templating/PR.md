@@ -9,6 +9,7 @@
 - 7.2 Создал Nginx-ingress
 - 7.3 Задиплоил cert-manager + добавил ClusterIssuer
 - 7.4 Установил Chartmuseum
+- 7.5 Установил Harbor
 
 ## Как запустить проект:
 
@@ -52,6 +53,13 @@ kubectl create ns chartmuseum
 helm install chartmuseum stable/chartmuseum --wait --namespace=chartmuseum --version=2.13.0 -f chartmuseum/values.yaml
 ```
 
+- 7.5 Установил harbor
+
+```
+kubectl create ns harbor
+helm install harbor harbor/harbor -n harbor --wait --version=harbor-1.4.1
+```
+
 ## Как проверить работоспособность:
 
 - 7.4 Установил Chartmuseum
@@ -80,3 +88,27 @@ Get the ChartMuseum URL by running:
 export POD_NAME=$(kubectl get pods --namespace chartmuseum -l "app=chartmuseum" -l "release=chartmuseum" -o jsonpath="{.items[0].metadata.name}")
   echo http://127.0.0.1:8080/
   kubectl port-forward $POD_NAME 8080:8080 --namespace chartmuseum
+
+## Questions from HM
+
+3.15 Опишите в PR последовательность действий, необходимых для добавления туда helm chart's и их установки с использованием chartmuseum как репозитория
+
+Вот здесь все доступные команды перечислены - [chartmuseum-github](https://github.com/helm/chartmuseum#installing-charts-into-kubernetes)
+
+Add the URL to your _ChartMuseum_ installation to the local repository list:
+
+```bash
+helm repo add chartmuseum http://localhost:8080
+```
+
+Search for charts:
+
+```bash
+helm search chartmuseum/
+```
+
+Install chart:
+
+```bash
+helm install chartmuseum/mychart
+```
