@@ -8,15 +8,15 @@ metadata:
         kubernetes.io/tls-acme: "true"
         cert-manager.io/cluster-issuer: "letsencrypt-prod"
 spec:
-  tls:
+    tls:
     - hosts:
-        - hipster-shop.35.241.197.0.sslip.io
-      secretName: hipster-shop.35.241.197.0.sslip.io
+        - hipster-shop.34.78.195.192.sslip.io
+      secretName: hipster-shop.34.78.195.192.sslip.io
     rules:
-    - host: hipster-shop.35.241.197.0.sslip.io
+    - host: hipster-shop.34.78.195.192.sslip.io
       http:
         paths:
         - path: /
           backend:
             serviceName: frontend
-            servicePort: 8000
+            servicePort: 80

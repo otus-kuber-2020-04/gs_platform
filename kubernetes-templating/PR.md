@@ -1,7 +1,7 @@
 Выполнено ДЗ №
 
 - [x] Основное ДЗ
-- [ ] Задание со \*
+- [x] Задание со \*
 
 ## В процессе сделано:
 
@@ -10,6 +10,10 @@
 - 7.3 Задиплоил cert-manager + добавил ClusterIssuer
 - 7.4 Установил Chartmuseum
 - 7.5 Установил Harbor
+- 7.6 Описал Helmfile
+- 7.7 Создал свой Helm chart для hipster-shop и frontend (первый зависит от второго)
+- 7.8 Kubecfg описал и добавил кастомный kube.libsonnet
+- 7.9 Kustomize описал
 
 ## Как запустить проект:
 
@@ -40,7 +44,7 @@ kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/relea
 helm install \
   cert-manager jetstack/cert-manager \
   --namespace cert-manager \
-  --version v0.15.1 \
+  --version 0.15.1 \
 #  --set installCRDs=true
 # To automatically install and manage the CRDs as part of your Helm release, you must add the --set installCRDs=true flag to your Helm installation command.
 kubectl apply -f cert-manager/cluster-issuer-prod.yaml -n cert-manager
@@ -57,7 +61,36 @@ helm install chartmuseum stable/chartmuseum --wait --namespace=chartmuseum --ver
 
 ```
 kubectl create ns harbor
-helm install harbor harbor/harbor -n harbor --wait --version=harbor-1.4.1
+helm install harbor harbor/harbor -n harbor --wait --version=harbor-1.4.1 -f kubernetes-templating/harbor/values.yaml
+```
+
+- 7.6 Описал Helmfile
+
+```
+cd kubernetes-templating/helmfile/
+helmfile -e production apply
+```
+
+- 7.7 Создал свой Helmcahrt
+
+```
+kubectl create ns hipster-shop
+helm upgrade --install frontend kubernetes-templating/frontend --namespace hipster-shop
+```
+
+- 7.8 Kubecfg
+
+```
+kubecfg show services.jsonnet
+kubecfg update services.jsonnet --namespace hipster-shop
+```
+
+- 7.9 Kustomize описал
+
+```
+kubectl apply -k kubernetes-templating/kustomize/overrides/hipster-shop-lab
+kubectl create ns hipster-shop-prod
+kubectl apply -k kubernetes-templating/kustomize/overrides/hipster-shop-prod
 ```
 
 ## Как проверить работоспособность:
@@ -68,14 +101,29 @@ helm install harbor harbor/harbor -n harbor --wait --version=harbor-1.4.1
 helm ls -n chartmuseum
 kubectl get svc nginx-ingress-controller -n nginx-ingress -o=jsonpath='{.status.loadBalancer.ingress[0].ip}'
 #Update chartmuseum/values.yaml
-# - name: chartmuseum.$INGRESS_EIP.nip.io
+# - name: chartmuseum.$INGRESS_EIP.sslip.io
 export INGRESS_EIP=$(kubectl get svc nginx-ingress-controller -n nginx-ingress -o=jsonpath='{.status.loadBalancer.ingress[0].ip}')
-curl https://chartmuseum.$INGRESS_EIP.nip.io
+curl https://chartmuseum.$INGRESS_EIP.sslip.io
 ```
 
 ![Proof](https://habrastorage.org/webt/zv/z2/hr/zvz2hrxnncsnfnjcwcqddtzcwbm.png)
 
 Должно вернуть Chartmuseum welcome page
+
+- 7.7 Создал свой Helmcahrt
+
+```
+kubectl describe ingresses -n hipster-shop
+```
+
+получить URL и открыть страницу
+
+- 7.9 Kustomize описал
+
+```
+kubectl describe pod -n hipster-shop dev-cartservice-***
+kubectl describe pod -n hipster-shop prod-cartservice-***
+```
 
 ## PR checklist:
 
