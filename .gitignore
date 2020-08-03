@@ -20,3 +20,6 @@ kubernetes-intro/web/app
 kubernetes-intro/microservices-demo
 kubernetes-intro/PR.md
 *.pdf
+# Terraform
+terraform.tfstate.backup
+terraform.tfstate

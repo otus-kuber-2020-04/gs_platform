@@ -1,0 +1,48 @@
+repositories:
+  - name: stable
+    url: https://kubernetes-charts.storage.googleapis.com
+  - name: jetstack
+    url: https://charts.jetstack.io
+  - name: harbor
+    url: https://helm.goharbor.io
+
+environments:
+  production:
+    values:
+      - domain: 34.78.195.192.sslip.io
+
+
+releases:
+- name: nginx-ingress
+  chart: stable/nginx-ingress
+  version: 1.40.3
+  namespace: nginx-ingress
+  wait: true
+
+- name: cert-manager
+  chart: jetstack/cert-manager
+  version: 0.15.1
+  namespace: cert-manager
+  wait: true
+  hooks:
+    - events: ["presync"]
+      showlogs: true
+      command: "kubectl"
+      args: ["apply", "-f", "https://raw.githubusercontent.com/jetstack/cert-manager/release-0.9/deploy/manifests/00-crds.yaml"]
+    - events: ["presync"]
+      showlogs: true
+      command: "kubectl"
+      args: ["apply","--validate=false", "-f", "https://github.com/jetstack/cert-manager/releases/download/v0.15.1/cert-manager.crds.yaml"]
+    - events: ["presync"]
+      showlogs: true
+      command: "kubectl"
+      args: ["apply", "-f", "./values/cluster-issuer-prod.yaml", 
+      "-n", "cert-manager"]
+
+- name: harbor
+  chart: harbor/harbor
+  version: 1.4.1
+  namespace: harbor
+  wait: true
+  values:
+    - "./values/harbor-values.yaml"
