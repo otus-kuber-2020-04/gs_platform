@@ -10,7 +10,11 @@
 
 ## Как запустить проект:
 
-- Например, запустить команду X в директории Y
+```
+minikube start
+kubectl apply -f deploy/crd.yml
+kubectl apply -f deploy/cr.yml
+```
 
 ## Как проверить работоспособность:
 
@@ -19,3 +23,12 @@
 ## PR checklist:
 
 - [ ] Выставлен label с темой домашнего задания
+
+# Issues
+
+kubectl describe mysqls.otus.homework mysql-instance
+usless_data: useless info - проходит проверку
+
+https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/#publish-validation-schema-in-openapi-v2
+
+С новым apiextensions.k8s.io/v1 валидация данных обязательна (см schema)
