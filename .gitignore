@@ -23,3 +23,5 @@ kubernetes-intro/PR.md
 # Terraform
 terraform.tfstate.backup
 terraform.tfstate
+# Binaries 
+*.pyc
