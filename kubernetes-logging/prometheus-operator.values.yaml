@@ -1,0 +1,38 @@
+prometheusOperator:
+  tolerations:
+    - key: node-role
+      operator: Equal
+      value: infra
+      effect: NoSchedule
+
+grafana:
+  adminPassword: password
+  ingress:
+    enabled: true
+    hosts:
+      - grafana.34.76.141.66.xip.io
+
+prometheus:
+  ingress:
+    enabled: true
+    hosts:
+      - prometheus.34.76.141.66.xip.io
+
+  prometheusSpec:
+    serviceMonitorSelectorNilUsesHelmValues: false
+    serviceMonitorSelector: {}
+    serviceMonitorNamespaceSelector: {}
+
+    tolerations:
+      - key: node-role
+        operator: Equal
+        value: infra
+        effect: NoSchedule
+
+alertmanager:
+  alertmanagerSpec:
+    tolerations:
+      - key: node-role
+        operator: Equal
+        value: infra
+        effect: NoSchedule
