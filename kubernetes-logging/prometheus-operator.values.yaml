@@ -6,17 +6,17 @@ prometheusOperator:
       effect: NoSchedule
 
 grafana:
-  adminPassword: password
+  adminPassword: 1q2w3e4r
   ingress:
     enabled: true
     hosts:
-      - grafana.34.76.141.66.xip.io
+      - grafana.130.211.59.197.xip.io
 
 prometheus:
   ingress:
     enabled: true
     hosts:
-      - prometheus.34.76.141.66.xip.io
+      - prometheus.130.211.59.197.xip.io
 
   prometheusSpec:
     serviceMonitorSelectorNilUsesHelmValues: false
