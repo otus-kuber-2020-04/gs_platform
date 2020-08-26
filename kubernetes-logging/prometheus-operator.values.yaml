@@ -6,17 +6,22 @@ prometheusOperator:
       effect: NoSchedule
 
 grafana:
+  additionalDataSources:
+    - name: Loki
+      access: proxy
+      type: loki
+      url: http://loki:3100/
   adminPassword: 1q2w3e4r
   ingress:
     enabled: true
     hosts:
-      - grafana.130.211.59.197.xip.io
+      - grafana.34.77.164.14.xip.io
 
 prometheus:
   ingress:
     enabled: true
     hosts:
-      - prometheus.130.211.59.197.xip.io
+      - prometheus.34.77.164.14.xip.io
 
   prometheusSpec:
     serviceMonitorSelectorNilUsesHelmValues: false

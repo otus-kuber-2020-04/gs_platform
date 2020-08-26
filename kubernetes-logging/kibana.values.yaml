@@ -3,4 +3,4 @@ ingress:
   annotations: { kubernetes.io/ingress.class: nginx }
   path: /
   hosts:
-    - kibana.130.211.59.197.xip.io
+    - kibana.34.77.164.14.xip.io
