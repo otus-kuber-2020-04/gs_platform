@@ -4,3 +4,9 @@
 [submodule "kubernetes-vault/vault-helm"]
 	path = kubernetes-vault/vault-helm
 	url = https://github.com/hashicorp/vault-helm.git
+[submodule "kubernetes-vault/--force"]
+	path = kubernetes-vault/--force
+	url = https://github.com/hashicorp/vault-helm.git
+[submodule "kubernetes-vault/vault-guides"]
+	path = kubernetes-vault/vault-guides
+	url = https://github.com/hashicorp/vault-guides.git

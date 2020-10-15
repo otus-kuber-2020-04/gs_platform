@@ -5,7 +5,7 @@ resource "google_project_service" "kubernetes" {
 resource "google_container_cluster" "kubernetes" {
   name               = "otus-k8s-cluster"
   location           = "europe-west1"
-  min_master_version = "1.16.13-gke.1"
+  min_master_version = "1.16.15-gke.500"
   monitoring_service = "none"
   # stackdriver disabled
   logging_service = "none"
@@ -15,7 +15,7 @@ resource "google_container_cluster" "kubernetes" {
   ]
 
   remove_default_node_pool = true
-  initial_node_count = 3
+  initial_node_count       = 3
 
   master_auth {
     username = ""
@@ -51,4 +51,8 @@ resource "google_container_node_pool" "default-pool" {
 }
 
 
-
+resource "google_compute_address" "ip_address" {
+  name         = "gke-ext"
+  region       = "europe-west1"
+  network_tier = "STANDARD"
+}
